@@ -1,0 +1,15 @@
+{
+  "name": "spriteforge",
+  "owner": {
+    "name": "SpriteForge",
+    "email": "support@spriteforge.tech"
+  },
+  "description": "SpriteForge's Claude plugin: generate pixel art with SpriteForge's AI artist on your SpriteForge account.",
+  "plugins": [
+    {
+      "name": "spriteforge",
+      "source": "./",
+      "description": "Generate pixel art, sprite sets, animations and tilesets with SpriteForge's AI artist on your SpriteForge account, manage your projects and library, and download the results into your game, straight from Claude."
+    }
+  ]
+}
