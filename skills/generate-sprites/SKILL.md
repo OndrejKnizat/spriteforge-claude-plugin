@@ -104,7 +104,7 @@ depicted instead. Tile and map types use references for style only.
   (16x12 tiles at 24px fits).
 - Hand-tweaks after generating: `open_sprite_in_editor` with the `asset_id` opens the sprite in
   SpriteForge's editor - as a card in the conversation where the app shows them (`open_full_editor`
-  with its `session_id` brings up the whole Edit studio there), otherwise as an edit link for the
-  browser - and `save_to_library` with that `session_id` keeps the edit, the old version going into the
+  with the same `asset_id` opens it straight in the whole Edit studio instead), otherwise as an edit
+  link for the browser - and `save_to_library` with that `session_id` keeps the edit, the old version going into the
   sprite's history. In Claude Code, the SpriteForge Editor plugin adds pixel and tileset editor panes
   beside the conversation.
