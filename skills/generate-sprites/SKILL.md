@@ -46,7 +46,7 @@ in, and credits are bought there.
 | change an existing sprite ("give him a hat") | `edit` | `asset_id`, `prompt`; `mask_cells` to limit it to some pixels |
 | top-down walls and floors | `terrain` (wall, transition, floor) | `subject` (wall), `subject_b` (floor), square size |
 | an autotiling ground (grass, sand) | `wang` (16 tiles) | `subject`, square size |
-| side-scroller ground tiles with slopes | `platformer` (49 tiles) | `subject` (earth), `subject_b` (top), square size |
+| side-scroller ground tiles with slopes | `platformer` (49 tiles) | `subject` (ground surface, e.g. grass), `subject_b` (earth fill), square size |
 | a small map of terrains blending into each other | `multiterrain` | `terrains` (2-6), `cols`/`rows`, square tile size |
 
 **Tier** - if the user didn't pick one, choose it yourself; `get_generation_options` lists every tier's
@@ -73,7 +73,7 @@ depicted instead. Tile and map types use references for style only.
 - **Downloading (Claude Code):** save a result straight into the user's project:
 
   ```bash
-  curl -sSf -o "assets/sprites/slime.png" '<png_url>'
+  curl -sSf -o 'assets/sprites/slime.png' '<png_url>'
   ```
 
   `png_url` is one frame at 1x with real transparency (`&frame=N` for frame N, `&scale=N` to enlarge);
@@ -84,9 +84,12 @@ depicted instead. Tile and map types use references for style only.
   link (PNG up to 128x128 and 256 colours; it's kept 24 hours after its last edit):
 
   ```bash
-  curl -sS --data-binary @"assets/hero.png" -H 'Content-Type: image/png' \
+  curl -sS --data-binary @'assets/hero.png' -H 'Content-Type: image/png' \
     'https://www.spriteforge.tech/api/edit-session?name=hero'
   ```
+
+  Keep file paths in single quotes, so a name with `$`, backticks or spaces stays literal, and use
+  only letters, digits, `-` and `_` in `name=`.
 
   then `save_to_library` with the returned `id` (plus `project_id` and `name`). In chat apps,
   `upload_sprite` takes `png_base64` or `art` you drafted.
@@ -106,5 +109,8 @@ depicted instead. Tile and map types use references for style only.
   SpriteForge's editor - as a card in the conversation where the app shows them (`open_full_editor`
   with the same `asset_id` opens it straight in the whole Edit studio instead), otherwise as an edit
   link for the browser - and `save_to_library` with that `session_id` keeps the edit, the old version going into the
-  sprite's history. In Claude Code, the SpriteForge Editor plugin adds pixel and tileset editor panes
-  beside the conversation.
+  sprite's history. A tileset goes on to SpriteForge's tileset editor: `open_tileset_editor` with that
+  `session_id` (tiling preview, base texture). To show it as walls or isometric terrain - now or after
+  the user has edited it - call `open_tileset_editor` with the same `session_id` and `kind` `wall` or
+  `iso` (`wang` for flat), not its tiles: the set and the edits stay. In Claude Code, the SpriteForge
+  Editor plugin adds pixel and tileset editor panes beside the conversation.

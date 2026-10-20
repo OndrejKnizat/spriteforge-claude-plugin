@@ -1,7 +1,7 @@
 {
   "name": "spriteforge",
   "displayName": "SpriteForge",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Generate pixel art, sprite sets, animations and tilesets with SpriteForge's AI artist on your SpriteForge account, manage your projects and library, and download the results into your game, straight from Claude.",
   "author": {
     "name": "SpriteForge",
