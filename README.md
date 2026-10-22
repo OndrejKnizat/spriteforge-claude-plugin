@@ -39,7 +39,7 @@ also ask you to approve each tool call; allow the `generate` tool permanently th
 prompt too.
 
 It can't delete your sprites or projects, buy credits, manage API keys or change your account.
-New accounts get a one-time $0.25 credit to try AI
+New accounts get a one-time $1 credit to try AI
 generation, added the first time you open the SpriteForge studio while signed in - Claude will point
 you there.
 

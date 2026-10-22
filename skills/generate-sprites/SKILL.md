@@ -30,7 +30,7 @@ say what you spent at the end. (Whether the app itself asks before each tool cal
 permission setting, separate from this.)
 
 If the balance is short, or `get_account` reports `signup_credit_pending`, give the user the studio link
-from the tool's answer: new accounts get a one-time $0.25 starter credit by opening it once while signed
+from the tool's answer: new accounts get a one-time $1 starter credit by opening it once while signed
 in, and credits are bought there.
 
 ## Choosing the setup
@@ -77,7 +77,8 @@ depicted instead. Tile and map types use references for style only.
   ```
 
   `png_url` is one frame at 1x with real transparency (`&frame=N` for frame N, `&scale=N` to enlarge);
-  `sheet_url` is every frame of an animation or tileset in one PNG (`&cols=N` to change the layout).
+  `sheet_url` is every frame of an animation or tileset in one PNG; it already ends in `&cols=N`, so to
+  change the layout replace that number (appending a second `cols` does nothing).
   Links work without sign-in for 24 hours; `get_sprite_from_library` mints fresh ones for any sprite.
   Without a shell, give the user the link.
 - **Uploading a file from disk (Claude Code):** don't paste base64. Let curl send the bytes to an edit
