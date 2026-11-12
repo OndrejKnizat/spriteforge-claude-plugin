@@ -10,6 +10,10 @@ generate the kit in an order that keeps it matching, and wire the files into the
 each tool call (types, tiers, sizes, downloads) are in the `generate-sprites` skill; this skill is the
 plan around them.
 
+**Connector not signed in?** If the SpriteForge tools are missing or answer that they need
+authentication, still do step 1, then ask the user to sign in - Claude Code: run `/mcp`, pick
+SpriteForge, authorize; claude.ai: Settings, Connectors - and go on from step 2 when they're back.
+
 ## 1. Read the game, then write the asset list
 
 Look before asking. In a project folder, read the code and any design notes for:
@@ -20,8 +24,11 @@ Look before asking. In a project folder, read the code and any design notes for:
   characters on 16 px tiles for a richer look. One size per asset class, kept for the whole kit. A
   pickup the code draws smaller than its cell (an 8x8 apple in a 16 px tile) is still a 16x16 sprite;
   ask for the subject to fill most of the canvas and let the game scale or place it.
-- **The background colour** the sprites will sit on. On a dark scene, say so in the style line ("bold
-  light-edged silhouettes that read on a dark navy sky") so dark outlines don't vanish.
+- **The background colour** the sprites will sit on. You will judge every sprite against it (step 4).
+  On a dark scene, name the background in the project `description`, and give each dark subject (a
+  crow, a bat, a black cat) its own line in the subject: "mid-tone body with a pale rim, must read on a
+  dark navy sky". Keep "light edges" out of the style line and out of the ground's subject: there it
+  has come out as a pale frost line on top of the grass.
 - **What exists as a placeholder** - coloured rectangles, emoji, missing-texture squares, entity names in
   the code (`Player`, `Slime`, `Coin`), states (`idle`, `run`, `jump`). Each one is a line in the list.
 - **The engine** (Godot, Unity, Phaser, Pygame, LÖVE, plain canvas) and where it keeps images.
@@ -78,13 +85,16 @@ ask per job.
   per sprite for the style reference they will carry. Quote the hero's animation as if from scratch
   (`subject`, `width`, `height`, `frame_count`, no `asset_id`): the price is the same. An animation costs
   one call per frame plus a planning pass, so 4 frames are 5 calls.
-- Add 10% to the total you ask for, named as "room for a redraw or two", and stay inside it.
+- Add room for a redraw to the total you ask for - 10%, or the price of the kit's tileset if that is
+  more - named as "room for a redraw or two", and stay inside it.
 - Time: jobs run up to three at once, so give the sum of the quotes' `eta_seconds` divided by two, plus
   a minute for looking at the hero - "about 3 minutes", not a per-job list.
 - Balance short? Say what the balance covers (offer the 16 px version of the kit, or the first groups),
   and give the studio link from `get_account` for a top-up. New accounts get a free starter credit the
   first time they open the studio while signed in.
-- The user gave a budget instead ("spend up to $5")? Fit the list to it, say what was left out, and go.
+- The user gave a budget instead ("spend up to $5")? That budget is the ceiling for everything, redraws
+  included. Keep the small first kit if it fits (don't grow the list to fill the budget), cut it if it
+  doesn't, say what was left out, and go.
 
 ## 4. Generate in this order
 
@@ -92,28 +102,47 @@ ask per job.
    (`edit`, or one redraw) - every later sprite copies its look.
 2. **Ground** can run at the same time as the hero; it takes its look from the project style.
 3. **Enemies, then items and props**, each as a `set` with
-   `references: [{ asset_id: <hero>, role: "style" }]` and a `set_theme`. Up to three jobs run at once
-   per account; start them together and wait on all of them.
+   `references: [{ asset_id: <hero>, role: "style" }]` and a `set_theme`. Start each subject with the
+   thing's plain name ("crow, flying, side view, ..."): the sprite's library name is cut from the
+   subject's first words. Up to three jobs run at once per account; start them together and wait on
+   all of them (a job may answer `queued` for a moment - keep calling `get_job`).
 4. **Animations last**, on the approved hero: `type: "animation"` with the hero's `asset_id`, a short
    `subject` naming the character again (it is required even with `asset_id`), the `motion`,
-   `frame_count`, and an `animation_name` ("walk", "run"). The frames are saved onto the hero sprite.
+   `frame_count`, and an `animation_name` ("walk", "run"). The frames are saved onto the hero sprite,
+   and its sheet then has **`frame_count` + 1 frames: frame 0 is the standing hero, the motion is
+   frames 1 to N.** Loop frames 1-N in the game, not 0-N.
 
 Give every `generate` call the `project_id`, its own `request_id` (e.g. `<game>-enemies-1`) and
 `max_cents` = its quote (plus the reference cents).
 
-**Check every preview.** A sprite that is blank, cut off or not the subject is a miss: redraw that one
-as a `single` with a more concrete subject ("round glass flask full of red liquid, cork stopper, filling
-most of the canvas") and a kit sprite as the style reference. Don't hand over a kit with a hole in it,
-and don't redraw sprites that are merely not perfect - list those for the user instead.
+**Check every result on the game's background, not only in the preview.** Previews are drawn on a
+light backdrop, so a dark sprite that looks fine there can vanish on a night sky. Look at each sprite
+over the game's own background colour before going on - composite the PNG onto that colour, or put it
+in the game and look (`&scale=8` on a `png_url` or `sheet_url` gives an enlarged copy; a tileset
+preview has no gaps between tiles, so enlarge it to see the cap). Play an animation at speed before
+you call it good.
+
+- A sprite that is blank, cut off, unreadable on the background or not the subject is a miss: redraw
+  that one as a `single` with a more concrete subject ("round glass flask full of red liquid, cork
+  stopper, filling most of the canvas") and a kit sprite as the style reference.
+- A tileset that misses is redrawn as the same type with a more concrete subject, at its full price -
+  only inside the redraw room or the user's budget.
+- An animation that reads weakly is listed for the user with its redraw price, not redrawn on your
+  own: it is the dearest job in the kit. (A small four-legged run at 16 px has come out as a slide.)
+- Don't hand over a kit with a hole in it, and don't redraw sprites that are merely not perfect - list
+  those for the user instead.
+- A redraw doesn't replace the first try: both stay in the SpriteForge project, and the connector
+  can't delete. Record the superseded `asset_id`s in the manifest and name them in the hand-over.
 
 ## 5. Put it in the game
 
-Download with `curl` as the `generate-sprites` skill shows, into the engine's usual place, lower-case
-snake_case names from the code's own entity names:
+Download with `curl` as the `generate-sprites` skill shows (in Windows PowerShell call `curl.exe`:
+plain `curl` is another command there), into the engine's usual place, lower-case snake_case names
+from the code's own entity names:
 
 ```
 assets/sprites/hero.png            one frame, 1x, transparent
-assets/sprites/hero_walk.png       sheet_url of the animated hero (frames left to right)
+assets/sprites/hero_walk.png       sheet_url of the animated hero (frame 0 standing, then the walk)
 assets/sprites/enemies/slime.png
 assets/sprites/items/coin.png
 assets/tiles/crypt.png             sheet_url of the tileset
@@ -121,7 +150,8 @@ assets/spriteforge-kit.json        the manifest
 ```
 
 Write `spriteforge-kit.json` next to them: the project id and style line, and per file its
-`asset_id`, size, frame count, frame size, the animation's name, and for tilesets the layout:
+`asset_id`, size, frame count, frame size, each animation's name with its first frame and length, and
+for tilesets the layout:
 
 - `terrain` sheets: three tiles - wall, transition, floor.
 - `wang` sheets: 4 columns; frame index = corner mask (NW=1, NE=2, SW=4, SE=8, so 15 is the solid tile);
@@ -129,10 +159,21 @@ Write `spriteforge-kit.json` next to them: the project id and style line, and pe
 - `platformer` sheets: 49 tiles - the 47 blob-autotile tiles in ascending key order, then an up-slope and
   a down-slope. A tile's key adds N=128, E=64, S=32, W=16, NE=8, SE=4, SW=2, NW=1 for each solid
   neighbour, a corner counting only when both edges beside it are solid. For a level stored as a grid of
-  solid cells, compute each cell's key and draw the tile at that key's rank; write the 47 keys, in order,
-  into the manifest so the game code can look the frame up.
+  solid cells, compute each cell's key and draw the tile at that key's position in this list (frame 0
+  is key 0, frame 46 is key 255; keys under 128 have open sky above and carry the surface cap):
 
-Future sessions read the manifest to extend the kit in the same style.
+  ```
+  0, 16, 32, 48, 50, 64, 80, 96, 100, 112, 114, 116, 118, 128, 144, 145, 160, 176, 177, 178, 179, 192,
+  200, 208, 209, 216, 217, 224, 228, 232, 236, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250,
+  251, 252, 253, 254, 255
+  ```
+
+  Write that list into the manifest too. Decide what lies beyond the level's edge - usually solid to
+  the sides and below, open above - or the ground ends in edge tiles at the screen border.
+
+Future sessions read the manifest to extend the kit in the same style. A game opened straight from a
+file (no web server) can't fetch JSON, so also put the frame sizes and the key list into the game code
+as constants.
 
 Then make the game show it:
 
@@ -147,6 +188,7 @@ Then make the game show it:
 ## 6. Hand over
 
 One short message: what was made (count by group), where the files are, what it cost against the
-quote, and anything you'd redraw with their OK. Offer the next step that fits the game - the states you
+quote (the `get_account` balance before and after; `get_job` shows the reserved price only), and
+anything you'd redraw with their OK. Offer the next step that fits the game - the states you
 left out, an attack animation, the next enemy tier, a second biome - with its price. For a sprite the
 user wants to nudge by hand, `open_sprite_in_editor` opens it in SpriteForge's editor.

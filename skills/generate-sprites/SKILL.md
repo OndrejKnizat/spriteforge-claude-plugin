@@ -101,7 +101,8 @@ depicted instead. Tile and map types use references for style only.
 ## Good to know
 
 - An animation of a library sprite is saved onto that sprite as a named animation (`animation_name`,
-  default "idle"); one drawn from scratch becomes a new sprite.
+  default "idle"); one drawn from scratch becomes a new sprite. With `asset_id` the sheet has
+  `frame_count` + 1 frames: frame 0 is the sprite as it was (the rest pose), the motion is frames 1-N.
 - An `edit` updates the sprite in place and keeps its previous version in the sprite's history, unless
   `save_as_new` is set (animated sprites always get a new sprite for the edited still).
 - If part of a multi-call job fails, what was drawn is delivered and the rest refunded; `get_job` says so.
