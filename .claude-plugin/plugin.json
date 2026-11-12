@@ -1,8 +1,8 @@
 {
   "name": "spriteforge",
   "displayName": "SpriteForge",
-  "version": "0.3.3",
-  "description": "Generate pixel art, sprite sets, animations and tilesets with SpriteForge's AI artist on your SpriteForge account, manage your projects and library, and download the results into your game, straight from Claude.",
+  "version": "0.4.0",
+  "description": "Generate pixel art, sprite sets, animations and tilesets with SpriteForge's AI artist on your SpriteForge account - or a whole matching art kit for your game in one go - manage your projects and library, and download the results into your game, straight from Claude.",
   "author": {
     "name": "SpriteForge",
     "email": "support@spriteforge.tech",

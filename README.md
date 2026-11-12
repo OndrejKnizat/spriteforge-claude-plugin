@@ -22,6 +22,12 @@ The plugin's connector, **SpriteForge**, connects to your SpriteForge account wh
   Wang and platformer tilesets, and blended multi-terrain maps. Claude writes the prompt and picks the
   setup (type, size, project, reference sprites) and, unless you name one, the quality tier. Try
   `/spriteforge:generate a slime enemy with a bounce animation`;
+- make **a whole game's art kit** in one go: Claude reads your game, lists the hero, enemies, items,
+  tiles and animations it needs, sets one project style, tells you one total, and after your OK
+  generates the kit hero-first so everything matches, then saves the PNGs and sprite sheets into your
+  project with a manifest. Try `/spriteforge:kit` in your game's folder, or just say "make the art
+  kit for this game". A 16x16 starter kit (10 sprites, a walk cycle, wall and floor tiles) came to
+  $2.20 when we ran it on 12 Nov 2026;
 - list your projects, read or change their style settings (style, description, light, outline,
   palette) and create new ones - generations follow the project's style;
 - browse your sprites, **download** them as PNGs with real transparency (one frame, or a whole
@@ -39,7 +45,7 @@ also ask you to approve each tool call; allow the `generate` tool permanently th
 prompt too.
 
 It can't delete your sprites or projects, buy credits, manage API keys or change your account.
-New accounts get a one-time $1 credit to try AI
+New accounts get a one-time free credit to try AI
 generation, added the first time you open the SpriteForge studio while signed in - Claude will point
 you there.
 

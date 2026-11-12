@@ -1,6 +1,6 @@
 ---
 name: generate-sprites
-description: Generate pixel art and game sprites with AI on the user's SpriteForge account - single sprites, themed sprite sets, animations, AI edits of an existing sprite, terrain / Wang / platformer tilesets and blended multi-terrain maps - and put them into their SpriteForge project or their game's files. Use when the user asks to generate, create or make sprites, pixel art, icons, tiles, tilesets, maps or animations, or to AI-edit or animate a sprite they have. Needs the signed-in SpriteForge connector.
+description: Generate pixel art and game sprites with AI on the user's SpriteForge account (for a whole game's matching art kit, use game-kit instead) - single sprites, themed sprite sets, animations, AI edits of an existing sprite, terrain / Wang / platformer tilesets and blended multi-terrain maps - and put them into their SpriteForge project or their game's files. Use when the user asks to generate, create or make sprites, pixel art, icons, tiles, tilesets, maps or animations, or to AI-edit or animate a sprite they have. Needs the signed-in SpriteForge connector.
 ---
 
 # Generate pixel art with SpriteForge
@@ -30,7 +30,7 @@ say what you spent at the end. (Whether the app itself asks before each tool cal
 permission setting, separate from this.)
 
 If the balance is short, or `get_account` reports `signup_credit_pending`, give the user the studio link
-from the tool's answer: new accounts get a one-time $1 starter credit by opening it once while signed
+from the tool's answer: new accounts get a one-time free starter credit by opening it once while signed
 in, and credits are bought there.
 
 ## Choosing the setup
@@ -42,7 +42,7 @@ in, and credits are bought there.
 | a sprite, item, icon, character | `single` | `subject`, `width`, `height` |
 | a character or creature where anatomy matters | `phased` (2-3 staged passes) | `subject`, size |
 | several matching sprites ("potion, scroll, key") | `set` (1-8, one shared palette) | `subjects`, size, optional `set_theme` |
-| an animation (walk, idle, attack) | `animation` | `subject`, `frame_count` 1-8, `motion`; `asset_id` to animate an existing sprite |
+| an animation (walk, idle, attack) | `animation` | `subject` (always, also with `asset_id`), `frame_count` 1-8, `motion`; `asset_id` to animate an existing sprite |
 | change an existing sprite ("give him a hat") | `edit` | `asset_id`, `prompt`; `mask_cells` to limit it to some pixels |
 | top-down walls and floors | `terrain` (wall, transition, floor) | `subject` (wall), `subject_b` (floor), square size |
 | an autotiling ground (grass, sand) | `wang` (16 tiles) | `subject`, square size |
@@ -54,7 +54,8 @@ price per call and usual time by size. Sensible defaults: **Sonnet** for most sp
 **Opus** for 48-64px canvases, detailed characters and final assets (it hits exact grids at every size);
 **Haiku** for small, simple icons when cost matters (cheap but slow). The Low/High variants are the same
 model thinking less or more. Multi-call types multiply the price (a 6-sprite set is 6 calls; an
-animation is one call per frame).
+animation is one call per frame plus a planning pass, so 4 frames are 5 calls). A reference sprite adds
+about a cent per sprite drawn.
 
 **Size** - 16-32px for items and icons, 32-48px for characters, 16 or 32px for tiles; 64px is the
 maximum. Width and height can differ for sprites; tiles are square.
